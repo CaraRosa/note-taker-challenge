@@ -75,12 +75,15 @@ const renderActiveNote = () => {
 const handleNoteSave = () => {
   const newNote = {
     title: noteTitle.value,
-    text: noteText.value
+    text: noteText.value,
   };
-  saveNote(newNote).then(() => {
-    getAndRenderNotes();
-    renderActiveNote();
-  });
+  saveNote(newNote)
+    .then((response) => response.json()) // Parse the response JSON
+    .then((savedNote) => {
+      activeNote = savedNote; // Update activeNote with the saved note
+      getAndRenderNotes();
+      renderActiveNote();
+    });
 };
 
 // Delete the clicked note
@@ -191,4 +194,7 @@ if (window.location.pathname === '/notes') {
   noteForm.addEventListener('input', handleRenderBtns);
 }
 
+
 getAndRenderNotes();
+
+
