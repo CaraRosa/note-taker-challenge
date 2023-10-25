@@ -8,8 +8,11 @@ The Note Taker application allows users to input tasks they need to complete. Th
 
 You can clone or fork this repository to contribute to the app.
 
+![Application](./images/application.png)
+[Note Taker App](https://secret-cliffs-61870-e58852470ed1.herokuapp.com/notes)
 ## Credits
 
+Cloned the starter code from the miniature-eureka repository.
 ## License
 
 An ISC License is applied to this application.
