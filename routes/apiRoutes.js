@@ -4,39 +4,68 @@ const util = require('util');
 const router = require('express').Router();
 // uuid package
 const { v4: uuidv4 } =  require('uuid');
+const readFileAsync = util.promisify(fs.readFile);
 const writeFileAsync = util.promisify(fs.writeFile);
 var notes;
 
-// reads the notes
-module.exports = (app) => {
-    app.get('/api/notes', (req, res) => {
-        const notes = JSON.parse(fs.readFileSync('db.json', 'utf8'));
+
+// GET notes
+router.get("/notes", (req, res) => {
+    readFileAsync("db/db.json", "utf8").then(function (data) {
+        notes = JSON.parse(data);
+
         res.json(notes);
     });
+});
 
-    router.post('/api/notes', (req, res) => {
-        const newNote = req.body;
-        // newNote.id = uuidv4();
-        newNote.id = generateUniqueID();
+// POST request notes
 
-        const notes = JSON.parse(fs.readFileSync('db.json', 'utf8'));
+router.post("/notes", (req, res) => {
+    readFileAsync("db/db.json", "utf8").then(function (data) {
+        notes = JSON.parse(data);
+
+        let newNote = req.body;
+
+        // assigns note a unique ID
+        newNote.id = uuidv4();
 
         notes.push(newNote);
 
-        saveNotesToFile(notes);
+        notes = JSON.stringify(notes);
 
-        // fs.writeFileSync('db.json', JSON.stringify(notes, null, 2));
-
-        res.json(newNote);
+        writeFileAsync("db/db.json", notes).then(function (data) {
+            console.log("The note has been added!");
+        });
+        res.json(notes);
     });
-};
+});
 
-function generateUniqueID() {
-    return Date.now().toString();
-  }
-  
-  function saveNotesToFile(notes) {
-    const filePath = path.join(__dirname, 'db.json');
-  
-    fs.writeFileSync(filePath, JSON.stringify(notes), 'utf8');
-  }
+// DELETE a note
+router.delete("/notes/:id", (req, res) => {
+    let noteID = req.params.id;
+
+    let indexDelete = notes.findIndex(note => note.id === noteID);
+
+    if(indexDelete !== -1) {
+        let deletedNote = notes[indexDelete];
+        notes.splice(indexDelete, 1);
+
+        console.log('Deleted Note:', deletedNote);
+        console.log('Updated Notes Array:', notes);
+        // let noteJSON = JSON.stringify(notes, null, 2);
+
+        writeFileAsync("db/db.json", JSON.stringify(notes, null, 2))
+            .then(() => {
+                res.json({ success: true, message: "Note deleted successfully!" });
+            })
+            .catch(error => {
+                console.error('Error in file writting', error);
+                res.status(500).json({ success: false, message: "Internal server Error "});
+            });
+
+    } else {
+        res.status(404).json({ success: false, message: "Note was not found." });
+    }
+});
+
+module.exports = router;
