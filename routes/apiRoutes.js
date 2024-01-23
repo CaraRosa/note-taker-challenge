@@ -1,7 +1,11 @@
 // File system
 const fs = require('fs');
+const util = require('util');
+const router = require('express').Router();
 // uuid package
 const { v4: uuidv4 } =  require('uuid');
+const writeFileAsync = util.promisify(fs.writeFile);
+var notes;
 
 // reads the notes
 module.exports = (app) => {
@@ -10,7 +14,7 @@ module.exports = (app) => {
         res.json(notes);
     });
 
-    app.post('/api/notes', (req, res) => {
+    router.post('/api/notes', (req, res) => {
         const newNote = req.body;
         // newNote.id = uuidv4();
         newNote.id = generateUniqueID();
@@ -21,7 +25,7 @@ module.exports = (app) => {
 
         saveNotesToFile(notes);
 
-        fs.writeFileSync('db.json', JSON.stringify(notes, null, 2));
+        // fs.writeFileSync('db.json', JSON.stringify(notes, null, 2));
 
         res.json(newNote);
     });
