@@ -1,16 +1,1 @@
-[
-  {
-    "title": "Test Title",
-    "text": "Test text"
-  },
-  {
-    "title": "new",
-    "text": "hi!",
-    "id": 2
-  },
-  {
-    "title": "Hi",
-    "text": "Hello",
-    "id": 3
-  }
-]
+[{"title":"Welcome!","text":"This is my note.","id":"70b9dd3c-a91a-45fa-8d83-af61343125c0"},{"title":"My second note","text":"So cool","id":"9720154a-86b3-47e9-8012-86472bdd11f8"}]
